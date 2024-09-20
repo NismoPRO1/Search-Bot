@@ -78,11 +78,31 @@
     <script>
         async function searchQuestion() {
             const question = document.getElementById('question').value;
-            const response = await fetch(`/search?q=${question}`);
-            const data = await response.json();
-            document.getElementById('result').innerText = data.answer;
-            document.getElementById('link').href = data.link;
-            document.getElementById('link').innerText = data.link;
+            if (question === "") {
+                alert("Please enter a question.");
+                return;
+            }
+
+            try {
+                // Make the API request
+                const response = await fetch(`/search?q=${encodeURIComponent(question)}`);
+                
+                // Check if the request was successful
+                if (!response.ok) {
+                    throw new Error("Failed to fetch data.");
+                }
+                
+                // Parse the response data
+                const data = await response.json();
+                
+                // Display the result and the link
+                document.getElementById('result').innerText = data.answer;
+                document.getElementById('link').href = data.link;
+                document.getElementById('link').innerText = data.link;
+            } catch (error) {
+                console.error("Error fetching search results:", error);
+                alert("Something went wrong. Please try again later.");
+            }
         }
     </script>
 </head>
@@ -97,3 +117,4 @@
     </div>
 </body>
 </html>
+
