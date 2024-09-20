@@ -3,31 +3,29 @@ import requests
 
 app = Flask(__name__)
 
-# Your API Key and Custom Search Engine (CSE) ID
-api_key = 'AIzaSyCHypa5gHM29KNDoa7Y6f17WhUV7MJ9t4I'
-cse_id = '645b315c8a32c4605'
-
-def google_search(query, api_key, cse_id):
-    url = f"https://www.googleapis.com/customsearch/v1?q={query}&key={api_key}&cx={cse_id}"
-    response = requests.get(url)
-    results = response.json()
-    return results
+# Your new Google Gemini API Key
+gemini_api_key = 'AIzaSyChx4l1SUYQnzjCwOJlH-LzxOafYbM4998'
 
 @app.route('/search', methods=['GET'])
 def search():
-    query = request.args.get('q')  # Get the search query from the frontend
-    search_results = google_search(query, api_key, cse_id)
-    
-    # Extract the first result snippet and link from the Google Search API response
-    if 'items' in search_results:
-        answer = search_results['items'][0]['snippet']  # First result snippet
-        link = search_results['items'][0]['link']  # First result URL
-    else:
-        answer = "No results found."
-        link = "#"
+    query = request.args.get('q')
+    print(f"Received search query: {query}")
 
-    # Return a JSON response with the answer and link
-    return jsonify({'answer': answer, 'link': link})
+    try:
+        # Example API call to Google Gemini (replace with actual endpoint if needed)
+        url = f"https://gemini.googleapis.com/v1/search?q={query}&key={gemini_api_key}"
+        response = requests.get(url)
+        search_results = response.json()
+        
+        # Process the results
+        if 'results' in search_results and len(search_results['results']) > 0:
+            answer = search_results['results'][0]['snippet']  # Adjust based on Gemini response
+            link = search_results['results'][0]['link']  # Adjust based on Gemini response
+        else:
+            answer = "No results found."
+            link = "#"
 
-if __name__ == "__main__":
-    app.run(debug=True)
+        return jsonify({'answer': answer, 'link': link})
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({'error': 'Something went wrong'}), 500
