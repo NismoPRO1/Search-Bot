@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Bot</title>
     <style>
-        /* Set the page background color and center the content */
         body {
             background-color: black;
             color: white;
@@ -17,7 +16,6 @@
             font-family: Arial, sans-serif;
         }
 
-        /* Center box containing the input and button */
         .search-container {
             text-align: center;
             background-color: #333;
@@ -26,7 +24,6 @@
             box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.3);
         }
 
-        /* Styling the search input field */
         input[type="text"] {
             width: 300px;
             padding: 10px;
@@ -39,7 +36,6 @@
             color: white;
         }
 
-        /* Styling the search button */
         button {
             padding: 10px 20px;
             font-size: 16px;
@@ -51,21 +47,21 @@
             transition: background-color 0.3s ease;
         }
 
-        /* Button hover effect */
         button:hover {
             background-color: #f0f0f0;
         }
 
-        /* Styling the result box */
         .result {
             margin-top: 20px;
             background-color: #222;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+            width: 400px;  /* Increased width for the result box */
+            max-width: 100%;  /* Make it responsive */
+            word-wrap: break-word;  /* Handle long words */
         }
 
-        /* Styling the link */
         a {
             color: #00f;
             text-decoration: none;
@@ -84,24 +80,24 @@
             }
 
             try {
-                // Make the API request
                 const response = await fetch(`/search?q=${encodeURIComponent(question)}`);
-                
-                // Check if the request was successful
                 if (!response.ok) {
-                    throw new Error("Failed to fetch data.");
+                    throw new Error(`Request failed with status ${response.status}`);
                 }
-                
-                // Parse the response data
+
                 const data = await response.json();
-                
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
                 // Display the result and the link
                 document.getElementById('result').innerText = data.answer;
                 document.getElementById('link').href = data.link;
-                document.getElementById('link').innerText = data.link;
+                document.getElementById('link').innerText = "Read more";
             } catch (error) {
                 console.error("Error fetching search results:", error);
-                alert("Something went wrong. Please try again later.");
+                alert(`Something went wrong: ${error.message}`);
             }
         }
     </script>
@@ -117,4 +113,3 @@
     </div>
 </body>
 </html>
-
